@@ -12,7 +12,7 @@ import {
 import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close"; // 閉じるボタン用のアイコン
 import FastfoodIcon from "@mui/icons-material/Fastfood"; //食事アイコン
-import { Controller, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { ExpenseCategory, IncomeCategory } from "../types";
 import AlarmIcon from "@mui/icons-material/Alarm";
 import AddHomeIcon from "@mui/icons-material/AddHome";
@@ -23,12 +23,14 @@ import WorkIcon from "@mui/icons-material/Work";
 import SavingsIcon from "@mui/icons-material/Savings"; 
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import {zodResolver} from '@hookform/resolvers/zod'
-import { transactionSchema } from "./validations/schema";
+import { Scheme, transactionSchema } from "./validations/schema";
+
 
 interface TransactionFormProps {
   onCloseForm:() => void
   isEntryDrawerOpen: boolean
   currentDay:string
+  onSaveTransaction:(transaction: Scheme) => Promise<void>
 }
 
 type incomeExpense = 'income' | 'expense'
@@ -38,7 +40,7 @@ interface CategortItem {
   icon: JSX.Element
 }
 
-const TransactionForm = ({onCloseForm, isEntryDrawerOpen, currentDay}:TransactionFormProps) => {
+const TransactionForm = ({onCloseForm, isEntryDrawerOpen, currentDay,onSaveTransaction}:TransactionFormProps) => {
   const formWidth = 320;
 
   const expenseCategories: CategortItem[]=[
@@ -58,7 +60,7 @@ const TransactionForm = ({onCloseForm, isEntryDrawerOpen, currentDay}:Transactio
 
   const [categories, setCategories] = useState(expenseCategories)
 
-const {control, setValue, watch, formState:{errors}, handleSubmit} = useForm({
+const {control, setValue, watch, formState:{errors}, handleSubmit} = useForm<Scheme>({
   defaultValues:{
     type:'expense',
     date:currentDay,
@@ -85,8 +87,10 @@ useEffect(()=>{
   setValue('date', currentDay)
 },[currentDay])
 
-const onSubmit = (data:any) => {
+//送信処理
+const onSubmit:SubmitHandler<Scheme> = (data) => {
   console.log(data)
+  onSaveTransaction(data)
 }
 
   return (
