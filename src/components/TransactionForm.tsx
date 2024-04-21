@@ -22,6 +22,8 @@ import TrainIcon from "@mui/icons-material/Train";
 import WorkIcon from "@mui/icons-material/Work";
 import SavingsIcon from "@mui/icons-material/Savings"; 
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
+import {zodResolver} from '@hookform/resolvers/zod'
+import { transactionSchema } from "./validations/schema";
 
 interface TransactionFormProps {
   onCloseForm:() => void
@@ -56,15 +58,17 @@ const TransactionForm = ({onCloseForm, isEntryDrawerOpen, currentDay}:Transactio
 
   const [categories, setCategories] = useState(expenseCategories)
 
-const {control, setValue, watch} = useForm({
+const {control, setValue, watch, formState:{errors}, handleSubmit} = useForm({
   defaultValues:{
     type:'expense',
     date:currentDay,
     amount: 0,
     category: '',
     content:''
-  }
+  },
+  resolver: zodResolver(transactionSchema)
 })
+console.log(errors)
 
 const incomeExpenseToggle=(type:incomeExpense) => {
   setValue('type', type)
@@ -80,6 +84,10 @@ useEffect(() => {
 useEffect(()=>{
   setValue('date', currentDay)
 },[currentDay])
+
+const onSubmit = (data:any) => {
+  console.log(data)
+}
 
   return (
     <Box
@@ -115,7 +123,7 @@ useEffect(()=>{
         </IconButton>
       </Box>
       {/* フォーム要素 */}
-      <Box component={"form"}>
+      <Box component={"form"} onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2}>
           {/* 収支切り替えボタン */}
           <Controller name='type' control={control} render={({field}) => {
@@ -138,6 +146,8 @@ useEffect(()=>{
             InputLabelProps={{
               shrink: true,
             }}
+            error={!!errors.date}
+            helperText={errors.date?.message}
           />
           )}  />
           {/* カテゴリ */}
@@ -145,9 +155,12 @@ useEffect(()=>{
           name="category"
           control={control}
           render={({field}) => ( 
-          <TextField  {...field} id="カテゴリ" label="カテゴリ" select >
-            {categories.map((category) =>(
-              <MenuItem value={category.label}>
+          <TextField 
+          error={!!errors.category}
+            helperText={errors.category?.message}
+          {...field} id="カテゴリ" label="カテゴリ" select >
+            {categories.map((category,index) =>(
+              <MenuItem value={category.label} key={index}>
               <ListItemIcon>
                 {category.icon}
               </ListItemIcon>
@@ -161,25 +174,27 @@ useEffect(()=>{
           name="amount"
           control={control}
           render={({field}) => (
-            <TextField {...field} label="金額" type="number" />
+            <TextField {...field}
+            error={!!errors.amount}
+            helperText={errors.amount?.message}
+            value={field.value === 0 ? '' : field.value}
+            onChange={(e)=>{
+             const newValue =parseInt(e.target.value) || 0
+             field.onChange(newValue)}}
+             label="金額" 
+             type="number" />
           )}
           />
           {/* 内容 */}
           <Controller
           name="content"
           control={control}
-          render={({field}) => {
-            return(
+          render={({field}) => (
             <TextField 
-             {...field} 
-             value={field.value === '0' ? '' : field.value}
-             onChange={(e)=>{
-              const newValue =parseInt(e.target.value)
-              field.onChange(newValue)
-             }}
-             label="内容" 
-             type="text" />
-          )}}
+            error={!!errors.content}
+            helperText={errors.content?.message}
+             {...field} label="内容" type="text" />
+          )}
            />
           {/* 保存ボタン */}
           <Button type="submit" variant="contained" color={currentType === 'income' ? 'primary' : 'error'} fullWidth>
