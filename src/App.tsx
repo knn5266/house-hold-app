@@ -23,6 +23,7 @@ function App() {
 
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [currentMonth, setCurrentMonth] = useState(new Date())
+  const [isLoading, setIsLoading] = useState(true)
 
 
   // console.log(currentMonth)
@@ -49,6 +50,8 @@ useEffect(() => {
       }else{
         console.error('一般的なエラーは',err)
       }
+    }finally{
+      setIsLoading(false)
     }
   }
   fetchTransactions()
@@ -118,7 +121,7 @@ const handleUpdateTransaction = async(transaction:Scheme, transactionId: string)
           <Route path='/' element={<AppLayout />}>
             <Route index element={<Home monthlyTransactions={monthlyTransactions} setCurrentMonth={setCurrentMonth} onSaveTransaction={handleSaveTransaction} onDeleteTransaction={handleDeleteTransaction}
             onUpdateTransaction={handleUpdateTransaction} />} />
-            <Route path='/report' element={<Report currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} />} />
+            <Route path='/report' element={<Report currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} monthlyTransactions={monthlyTransactions} isLoading={isLoading} />} />
             <Route path='*' element={<NoMatch />} />
           </Route>
           </Routes>
