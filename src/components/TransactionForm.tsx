@@ -13,7 +13,7 @@ import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close"; // 閉じるボタン用のアイコン
 import FastfoodIcon from "@mui/icons-material/Fastfood"; //食事アイコン
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { ExpenseCategory, IncomeCategory } from "../types";
+import { ExpenseCategory, IncomeCategory, Transaction } from "../types";
 import AlarmIcon from "@mui/icons-material/Alarm";
 import AddHomeIcon from "@mui/icons-material/AddHome";
 import Diversity3Icon from "@mui/icons-material/Diversity3";
@@ -31,6 +31,10 @@ interface TransactionFormProps {
   isEntryDrawerOpen: boolean
   currentDay:string
   onSaveTransaction:(transaction: Scheme) => Promise<void>
+  selectedTransaction: Transaction | null
+  onDeleteTransaction: (transactionId: string) => Promise<void>
+  setSelectedTransaction: React.Dispatch<React.SetStateAction<Transaction | null>>
+  onUpdateTransaction: (transaction: Scheme, transactionId: string) => Promise<void>
 }
 
 type incomeExpense = 'income' | 'expense'
@@ -40,7 +44,7 @@ interface CategortItem {
   icon: JSX.Element
 }
 
-const TransactionForm = ({onCloseForm, isEntryDrawerOpen, currentDay,onSaveTransaction}:TransactionFormProps) => {
+const TransactionForm = ({onCloseForm, isEntryDrawerOpen, currentDay,onSaveTransaction, selectedTransaction,onDeleteTransaction, setSelectedTransaction,onUpdateTransaction}:TransactionFormProps) => {
   const formWidth = 320;
 
   const expenseCategories: CategortItem[]=[
@@ -60,7 +64,7 @@ const TransactionForm = ({onCloseForm, isEntryDrawerOpen, currentDay,onSaveTrans
 
   const [categories, setCategories] = useState(expenseCategories)
 
-const {control, setValue, watch, formState:{errors}, handleSubmit} = useForm<Scheme>({
+const {control, setValue, watch, formState:{errors}, handleSubmit, reset} = useForm<Scheme>({
   defaultValues:{
     type:'expense',
     date:currentDay,
@@ -74,6 +78,7 @@ console.log(errors)
 
 const incomeExpenseToggle=(type:incomeExpense) => {
   setValue('type', type)
+  setValue('category', '')
 }
 
 const currentType = watch('type')
@@ -90,7 +95,65 @@ useEffect(()=>{
 //送信処理
 const onSubmit:SubmitHandler<Scheme> = (data) => {
   console.log(data)
-  onSaveTransaction(data)
+  if(selectedTransaction){
+    onUpdateTransaction(data, selectedTransaction.id)
+    .then(() => {
+      console.log('更新しました')
+      setSelectedTransaction(null)
+    }).catch((error) => {
+      console.error(error)
+    })
+  }else{
+    onSaveTransaction(data)
+    .then(() => {
+      console.log('保存しました')
+      setSelectedTransaction(null)
+    }).catch((error) => {
+      console.error(error)
+    })
+  }
+
+  reset({
+    type:'expense',
+    date: currentDay,
+    amount: 0,
+    category: '',
+    content:''
+  })
+}
+
+useEffect(() => {
+  //選択肢が更新されたか確認
+  if(selectedTransaction)
+  {
+    const categoryExists = categories.some((category) => category.label === selectedTransaction.category)
+    setValue('category', categoryExists ? selectedTransaction.category : '')
+  }
+}, [selectedTransaction,categories])
+
+useEffect(() => {
+  if(selectedTransaction){
+    setValue('type', selectedTransaction.type)
+    setValue('date', selectedTransaction.date)
+    setValue('amount', selectedTransaction.amount)
+    setValue('category', selectedTransaction.category)
+    setValue('content', selectedTransaction.content)
+  }else{
+    reset({
+      type:'expense',
+      date: currentDay,
+      amount: 0,
+      category: '',
+      content:''
+    })
+  }
+}, [selectedTransaction])
+
+const handleDelete = () => {
+  if(selectedTransaction){
+    onDeleteTransaction(selectedTransaction?.id)
+    setSelectedTransaction(null)
+  }
 }
 
   return (
@@ -202,8 +265,15 @@ const onSubmit:SubmitHandler<Scheme> = (data) => {
            />
           {/* 保存ボタン */}
           <Button type="submit" variant="contained" color={currentType === 'income' ? 'primary' : 'error'} fullWidth>
-            保存
+            {selectedTransaction ? '更新' : '保存'}
           </Button>
+         {/* 削除ボタン */}
+         {selectedTransaction &&(
+             <Button onClick={handleDelete} variant="outlined" color={'secondary'} fullWidth>
+             削除
+           </Button>
+         )}
+       
         </Stack>
       </Box>
     </Box>

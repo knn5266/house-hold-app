@@ -9,7 +9,7 @@ import {theme} from './theme/theme'
 import { ThemeProvider } from '@emotion/react';
 import { CssBaseline } from '@mui/material';
 import { Transaction } from './types/index';
-import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import { format } from 'date-fns';
 import { formatMonth } from './utils/formatting';
@@ -23,7 +23,9 @@ function App() {
 
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [currentMonth, setCurrentMonth] = useState(new Date())
-  console.log(currentMonth)
+
+
+  // console.log(currentMonth)
   format(currentMonth,'yyyy-MM')
 
 useEffect(() => {
@@ -57,19 +59,56 @@ const monthlyTransactions = transactions.filter((transaction) => {
 })
 
 //取引を保存
-const handleSaveTransaction = async(transaction: Scheme) => {
+const handleSaveTransaction = async(transaction:Scheme) => {
   try{
     //firestoreに保存
-    const docRef = await addDoc(collection(db,'Transactions'),transaction)
-    console.log('Document wriiten with ID:', docRef.id)
+    const docRef = await addDoc(collection(db, "Transactions"), transaction);
+    console.log("Document written with ID: ", docRef.id);
+
+    const newTransaction = {
+      id: docRef.id,
+      ...transaction,
+    } as Transaction
+    setTransactions((prevTransaction) => [...transactions, newTransaction])
   }catch(err){
     if(isFireStoreError(err)){
-      // console.error(JSON.stringify(err,null,2))
       console.error('firebaseのエラーは',err)
     }else{
       console.error('一般的なエラーは',err)
   }
 }
+}
+
+const handleDeleteTransaction = async(transactionId: string) => {
+  try{
+    await deleteDoc(doc(db, "Transactions", transactionId));
+    const filterdTransactions = transactions.filter((transaction) => transaction.id !== transactionId )
+    setTransactions(filterdTransactions)
+  }catch(err){
+    if(isFireStoreError(err)){
+      console.error('firebaseのエラーは',err)
+    }else{
+      console.error('一般的なエラーは',err)
+  }
+  }
+}
+
+const handleUpdateTransaction = async(transaction:Scheme, transactionId: string) => {
+  try{
+    //firebase更新
+      const docRef = doc(db, "Transactions", transactionId);
+      await updateDoc(docRef, transaction);
+      const UpdatedTransactions = transactions.map((t) => t.id === transactionId ? {...t,...transaction} : t) as Transaction[]
+      setTransactions(UpdatedTransactions)
+  }catch(err){
+    if(isFireStoreError(err)){
+      console.error('firebaseのエラーは',err)
+    }else{
+      console.error('一般的なエラーは',err)
+  }
+  }
+}
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -77,7 +116,8 @@ const handleSaveTransaction = async(transaction: Scheme) => {
         <Router>
         <Routes>
           <Route path='/' element={<AppLayout />}>
-            <Route index element={<Home monthlyTransactions={monthlyTransactions} setCurrentMonth={setCurrentMonth} onSaveTransaction={handleSaveTransaction} />} />
+            <Route index element={<Home monthlyTransactions={monthlyTransactions} setCurrentMonth={setCurrentMonth} onSaveTransaction={handleSaveTransaction} onDeleteTransaction={handleDeleteTransaction}
+            onUpdateTransaction={handleUpdateTransaction} />} />
             <Route path='/report' element={<Report />} />
             <Route path='*' element={<NoMatch />} />
           </Route>
@@ -85,6 +125,6 @@ const handleSaveTransaction = async(transaction: Scheme) => {
       </Router>
     </ThemeProvider>
   );
-}}
+}
 
 export default App;
