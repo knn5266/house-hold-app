@@ -28,7 +28,7 @@ function Report({currentMonth,setCurrentMonth,monthlyTransactions,isLoading}:Rep
       </Grid>
     {/* カテゴリグラフ*/}
     <Grid item xs={12} md={4}><Paper sx={commonPeperStyle}>
-      <CategoryChart />
+      <CategoryChart monthlyTransactions={monthlyTransactions} isLoading={isLoading} />
       </Paper></Grid>
     {/* 棒グラフ*/}
     <Grid item xs={12} md={8}><Paper sx={commonPeperStyle}>
