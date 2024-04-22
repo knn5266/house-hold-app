@@ -5,6 +5,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { Transaction } from '../types';
 import { financeCalculations } from '../utils/financeCalculations';
+import { formatCurrency } from '../utils/formatting';
 
 interface MonthlySummaryProps{
   monthlyTransactions:Transaction[]
@@ -23,7 +24,7 @@ const MonthlySummary = ({monthlyTransactions}: MonthlySummaryProps) => {
               <ArrowUpwardIcon sx={{fontSize:'2rem'}}/>
               <Typography>収入</Typography>
             </Stack>
-            <Typography textAlign={'right'} variant='h5' fontWeight={'fontWeightBold'} sx={{wordBreak:'break-word', fontSize:{xs:'.8rem', sm:'1rem', md:'1.2rem'}}}>￥{income}</Typography>
+            <Typography textAlign={'right'} variant='h5' fontWeight={'fontWeightBold'} sx={{wordBreak:'break-word', fontSize:{xs:'.8rem', sm:'1rem', md:'1.2rem'}}}>￥{formatCurrency(income)}</Typography>
           </CardContent>
         </Card>
       </Grid>
@@ -35,7 +36,7 @@ const MonthlySummary = ({monthlyTransactions}: MonthlySummaryProps) => {
               <ArrowDownwardIcon sx={{fontSize:'2rem'}}/>
               <Typography>支出</Typography>
             </Stack>
-            <Typography textAlign={'right'} variant='h5' fontWeight={'fontWeightBold'} sx={{wordBreak:'break-word', fontSize:{xs:'.8rem', sm:'1rem', md:'1.2rem'}}}>￥{expense}</Typography>
+            <Typography textAlign={'right'} variant='h5' fontWeight={'fontWeightBold'} sx={{wordBreak:'break-word', fontSize:{xs:'.8rem', sm:'1rem', md:'1.2rem'}}}>￥{formatCurrency(expense)}</Typography>
           </CardContent>
         </Card>
       </Grid>
@@ -47,7 +48,7 @@ const MonthlySummary = ({monthlyTransactions}: MonthlySummaryProps) => {
               <AccountBalanceIcon sx={{fontSize:'2rem'}}/>
               <Typography>残高</Typography>
             </Stack>
-            <Typography textAlign={'right'} variant='h5' fontWeight={'fontWeightBold'} sx={{wordBreak:'break-word', fontSize:{xs:'.8rem', sm:'1rem', md:'1.2rem'}}}>￥{balance}</Typography>
+            <Typography textAlign={'right'} variant='h5' fontWeight={'fontWeightBold'} sx={{wordBreak:'break-word', fontSize:{xs:'.8rem', sm:'1rem', md:'1.2rem'}}}>￥{formatCurrency(balance)}</Typography>
           </CardContent>
         </Card>
       </Grid>

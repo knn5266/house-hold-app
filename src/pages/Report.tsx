@@ -36,7 +36,8 @@ function Report({currentMonth,setCurrentMonth,monthlyTransactions,isLoading}:Rep
       </Paper></Grid>
       {/* テーブル*/}
     <Grid item xs={12}>
-       <TransactionTable />
+       <TransactionTable
+       monthlyTransactions={monthlyTransactions} />
        </Grid>
    </Grid>
   )
