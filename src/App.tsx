@@ -118,7 +118,7 @@ const handleUpdateTransaction = async(transaction:Scheme, transactionId: string)
           <Route path='/' element={<AppLayout />}>
             <Route index element={<Home monthlyTransactions={monthlyTransactions} setCurrentMonth={setCurrentMonth} onSaveTransaction={handleSaveTransaction} onDeleteTransaction={handleDeleteTransaction}
             onUpdateTransaction={handleUpdateTransaction} />} />
-            <Route path='/report' element={<Report />} />
+            <Route path='/report' element={<Report currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} />} />
             <Route path='*' element={<NoMatch />} />
           </Route>
           </Routes>
