@@ -394,7 +394,7 @@ export default function TransactionTable({monthlyTransactions}:TransactionTableP
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={monthlyTransactions.length}
             />
             <TableBody >
               {visibleRows.map((transaction, index) => {
