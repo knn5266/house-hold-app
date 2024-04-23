@@ -11,9 +11,10 @@ interface ReportProps{
   setCurrentMonth: React.Dispatch<React.SetStateAction<Date>>
   monthlyTransactions: Transaction[]
   isLoading: boolean
+  onDeleteTransaction: (transactionId: string | readonly string[]) => Promise<void>
 }
 
-function Report({currentMonth,setCurrentMonth,monthlyTransactions,isLoading}:ReportProps) {
+function Report({currentMonth,setCurrentMonth,monthlyTransactions,isLoading, onDeleteTransaction}:ReportProps) {
   const commonPeperStyle = {
     height:'400px',
     display:'flex',
@@ -37,7 +38,7 @@ function Report({currentMonth,setCurrentMonth,monthlyTransactions,isLoading}:Rep
       {/* テーブル*/}
     <Grid item xs={12}>
        <TransactionTable
-       monthlyTransactions={monthlyTransactions} />
+       monthlyTransactions={monthlyTransactions} onDeleteTransaction={onDeleteTransaction} />
        </Grid>
    </Grid>
   )

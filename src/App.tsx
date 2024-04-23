@@ -82,10 +82,15 @@ const handleSaveTransaction = async(transaction:Scheme) => {
 }
 }
 
-const handleDeleteTransaction = async(transactionId: string) => {
+const handleDeleteTransaction = async(transactionIds: string | readonly string[]) => {
   try{
-    await deleteDoc(doc(db, "Transactions", transactionId));
-    const filterdTransactions = transactions.filter((transaction) => transaction.id !== transactionId )
+  const idsDelete = Array.isArray(transactionIds) ? transactionIds : [transactionIds]
+
+    for(const id of idsDelete){
+      await deleteDoc(doc(db, "Transactions", id));
+    }
+
+    const filterdTransactions = transactions.filter((transaction) => !idsDelete.includes(transaction.id) )
     setTransactions(filterdTransactions)
   }catch(err){
     if(isFireStoreError(err)){
@@ -121,7 +126,7 @@ const handleUpdateTransaction = async(transaction:Scheme, transactionId: string)
           <Route path='/' element={<AppLayout />}>
             <Route index element={<Home monthlyTransactions={monthlyTransactions} setCurrentMonth={setCurrentMonth} onSaveTransaction={handleSaveTransaction} onDeleteTransaction={handleDeleteTransaction}
             onUpdateTransaction={handleUpdateTransaction} />} />
-            <Route path='/report' element={<Report currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} monthlyTransactions={monthlyTransactions} isLoading={isLoading} />} />
+            <Route path='/report' element={<Report currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} monthlyTransactions={monthlyTransactions} isLoading={isLoading} onDeleteTransaction={handleDeleteTransaction} />} />
             <Route path='*' element={<NoMatch />} />
           </Route>
           </Routes>
