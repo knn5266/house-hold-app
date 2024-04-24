@@ -15,7 +15,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close"; // 閉じるボタン用のアイコン
 import FastfoodIcon from "@mui/icons-material/Fastfood"; //食事アイコン
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -30,18 +30,19 @@ import SavingsIcon from "@mui/icons-material/Savings";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import {zodResolver} from '@hookform/resolvers/zod'
 import { Scheme, transactionSchema } from "./validations/schema";
+import { AppContext, useAppContext } from "../context/AppContext";
 
 
 interface TransactionFormProps {
   onCloseForm:() => void
   isEntryDrawerOpen: boolean
   currentDay:string
-  onSaveTransaction:(transaction: Scheme) => Promise<void>
+  // onSaveTransaction:(transaction: Scheme) => Promise<void>
   selectedTransaction: Transaction | null
-  onDeleteTransaction: (transactionId: string | readonly string[]) => Promise<void>
+  // onDeleteTransaction: (transactionId: string | readonly string[]) => Promise<void>
   setSelectedTransaction: React.Dispatch<React.SetStateAction<Transaction | null>>
-  onUpdateTransaction: (transaction: Scheme, transactionId: string) => Promise<void>
-  isMobile:boolean
+  // onUpdateTransaction: (transaction: Scheme, transactionId: string) => Promise<void>
+  // isMobile:boolean
   isDialogOpen:boolean
   setIsDialogOpen:React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -53,8 +54,20 @@ interface CategortItem {
   icon: JSX.Element
 }
 
-const TransactionForm = ({onCloseForm, isEntryDrawerOpen, currentDay,onSaveTransaction, selectedTransaction,onDeleteTransaction, setSelectedTransaction,onUpdateTransaction, isMobile, isDialogOpen, setIsDialogOpen}:TransactionFormProps) => {
-  const formWidth = 320;
+const TransactionForm = ({onCloseForm, 
+  isEntryDrawerOpen,
+   currentDay,
+  //  onSaveTransaction, 
+  selectedTransaction,
+  // onDeleteTransaction, 
+  setSelectedTransaction,
+  // onUpdateTransaction, isMobile, 
+  isDialogOpen, setIsDialogOpen}:
+  TransactionFormProps) => {
+  
+const {isMobile,onDeleteTransaction,onSaveTransaction,onUpdateTransaction} = useAppContext()
+
+const formWidth =320
 
   const expenseCategories: CategortItem[]=[
     {label:'食費', icon:<FastfoodIcon fontSize="small"/>},

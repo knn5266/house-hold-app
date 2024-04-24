@@ -11,10 +11,12 @@ import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'
 import { Palette } from '@mui/icons-material'
 import { useTheme } from '@mui/material'
 import { isSameMonth } from 'date-fns'
+import { useMonthlyTransactions } from '../hooks/useMonthlyTransactions'
+import { useAppContext } from '../context/AppContext'
 
 interface CalendarProps {
-  monthlyTransactions: Transaction[]
-  setCurrentMonth:React.Dispatch<React.SetStateAction<Date>>
+  // monthlyTransactions: Transaction[]
+  // setCurrentMonth:React.Dispatch<React.SetStateAction<Date>>
   setCurrentDay:React.Dispatch<React.SetStateAction<string>>
   currentDay:string
   today: string
@@ -22,8 +24,13 @@ interface CalendarProps {
 }
 
 
-const Calendar = ({monthlyTransactions,setCurrentMonth, setCurrentDay, currentDay,today,onDateClick}: CalendarProps) => {
+const Calendar = ({
+  
+  // monthlyTransactions,
+  // etCurrentMonth, 
+  setCurrentDay, currentDay,today,onDateClick}: CalendarProps) => {
 
+  
 
   const renderEventContent =(eventInfo: EventContentArg) => {
     console.log(eventInfo)
@@ -50,6 +57,9 @@ const Calendar = ({monthlyTransactions,setCurrentMonth, setCurrentDay, currentDa
     setCurrentDay(today)
     }
   }
+
+  const monthlyTransactions = useMonthlyTransactions()
+const {setCurrentMonth} = useAppContext()
 
 
 const theme = useTheme()

@@ -6,15 +6,17 @@ import BarChart from '../components/BarChart'
 import TransactionTable from '../components/TransactionTable'
 import { Transaction } from '../types'
 
-interface ReportProps{
-  currentMonth: Date
-  setCurrentMonth: React.Dispatch<React.SetStateAction<Date>>
-  monthlyTransactions: Transaction[]
-  isLoading: boolean
-  onDeleteTransaction: (transactionId: string | readonly string[]) => Promise<void>
-}
+// interface ReportProps{
+//   currentMonth: Date
+//   setCurrentMonth: React.Dispatch<React.SetStateAction<Date>>
+//   monthlyTransactions: Transaction[]
+//   isLoading: boolean
+//   onDeleteTransaction: (transactionId: string | readonly string[]) => Promise<void>
+// }
 
-function Report({currentMonth,setCurrentMonth,monthlyTransactions,isLoading, onDeleteTransaction}:ReportProps) {
+const Report = () =>
+  // {currentMonth,setCurrentMonth,monthlyTransactions,isLoading, onDeleteTransaction}:ReportProps)
+   {
   const commonPeperStyle = {
     height:'400px',
     display:'flex',
@@ -25,20 +27,26 @@ function Report({currentMonth,setCurrentMonth,monthlyTransactions,isLoading, onD
    <Grid container spacing={2}>
     {/* 日付*/}
     <Grid item xs={12}>
-      <MonthSelector currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} />
+      <MonthSelector />
+       {/* currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} /> */}
       </Grid>
     {/* カテゴリグラフ*/}
     <Grid item xs={12} md={4}><Paper sx={commonPeperStyle}>
-      <CategoryChart monthlyTransactions={monthlyTransactions} isLoading={isLoading} />
+      <CategoryChart
+      //  monthlyTransactions={monthlyTransactions} isLoading={isLoading} 
+       />
       </Paper></Grid>
     {/* 棒グラフ*/}
     <Grid item xs={12} md={8}><Paper sx={commonPeperStyle}>
-      <BarChart monthlyTransactions={monthlyTransactions} isLoading={isLoading} />
+      <BarChart 
+      // monthlyTransactions={monthlyTransactions} isLoading={isLoading}
+      />
       </Paper></Grid>
       {/* テーブル*/}
     <Grid item xs={12}>
        <TransactionTable
-       monthlyTransactions={monthlyTransactions} onDeleteTransaction={onDeleteTransaction} />
+      //  monthlyTransactions={monthlyTransactions} onDeleteTransaction={onDeleteTransaction}
+        />
        </Grid>
    </Grid>
   )

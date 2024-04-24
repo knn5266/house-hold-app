@@ -21,18 +21,21 @@ import { Transaction } from "../types";
 import { formatCurrency } from "../utils/formatting";
 import IconComponents from "./common/IconComponents";
 import { theme } from "../theme/theme";
+import { useAppContext } from "../context/AppContext";
 interface TransactionMenuProps {
   dailyTransactions:Transaction[]
   currentDay:string
   onAddTransactionForm: () => void
   onSelectTransaction:(transaction: Transaction) => void
-  isMobile: boolean
+  // isMobile: boolean
   open: boolean
   onClose: () => void
 }
 
 
-const TransactionMenu = ({dailyTransactions,currentDay, onAddTransactionForm,onSelectTransaction,isMobile,open, onClose}:TransactionMenuProps) => {
+const TransactionMenu = ({dailyTransactions,currentDay, onAddTransactionForm,onSelectTransaction,open, onClose}:TransactionMenuProps) => {
+ const  { isMobile } =useAppContext()
+ 
   const menuDrawerWidth = 320;
   return (
     <Drawer
