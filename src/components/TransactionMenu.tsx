@@ -33,9 +33,10 @@ interface TransactionMenuProps {
 }
 
 
-const TransactionMenu = ({dailyTransactions,currentDay, onAddTransactionForm,onSelectTransaction,open, onClose}:TransactionMenuProps) => {
- const  { isMobile } =useAppContext()
- 
+const TransactionMenu = ({dailyTransactions,currentDay, onAddTransactionForm,onSelectTransaction,
+  // isMobile,
+  open, onClose}:TransactionMenuProps) => {
+    const {isMobile} = useAppContext()
   const menuDrawerWidth = 320;
   return (
     <Drawer
