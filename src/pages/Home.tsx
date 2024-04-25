@@ -42,11 +42,12 @@ const [isDialogOpen, setIsDialogOpen] =useState(false)
 //   const theme = useTheme()
 //  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
-  const dailyTransactions =useMemo(()=>{
-    return monthlyTransactions.filter((transaction) => {
-     transaction.date === currentDay
-    })
+  const dailyTransactions = useMemo(()=>{
+    return monthlyTransactions.filter(
+      (transaction) => transaction.date === currentDay)
   },[monthlyTransactions,currentDay]) 
+
+  
 
   const closeForm = () => {
     setSelectedTransaction(null)
